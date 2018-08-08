@@ -1,0 +1,7 @@
+version: '3.4'
+services:
+  cassandra:
+    image: cassandra1
+    volumes:
+    - ./conf:/srv/cassandra/conf
+    - ./data:/data
