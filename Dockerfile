@@ -10,14 +10,18 @@ RUN wget -O /srv/cassandra.tar.gz https://archive.apache.org/dist/cassandra/1.2.
 
 RUN ln -sv ./apache-cassandra-* /srv/cassandra
 
-RUN rm -rv /srv/cassandra/conf
+RUN rm /srv/cassandra/conf/cassandra.yaml
+RUN chown cassandra /srv/cassandra/conf
 
 USER cassandra
 
-VOLUME /srv/cassandra/conf
-
 WORKDIR /srv/cassandra
-CMD /srv/cassandra/bin/cassandra -f
+
+COPY --chown=cassandra:cassandra cassandra.yaml.template /srv/cassandra/conf/
+COPY entrypoint.sh /
+ENTRYPOINT ["/entrypoint.sh"]
+
+RUN sed -i 's/INFO,stdout,R/INFO,stdout/' /srv/cassandra/conf/log4j-server.properties
 
 EXPOSE 7000
 EXPOSE 7001
